@@ -103,7 +103,7 @@ var animating=0;
 function pick(cell){
 	if(gamescreencomplete){
 		if(winner==1){playerturn=1; window.location.href='index.html';}
-		else{window.location.href='index.html?youmademeangry';}
+		else{playerturn=1; window.location.href='index.html?youmademeangry';} // Interesting point here: in both cases I set playerturn=1 to stop the rest of the function from actually doing anything, but is this necessary when window.location.href just loads a new page anyway? Does the rest of the function even get interpreted or is it dropped immediately to load the new page? I do not know!
 	}
 	if(playerturn==0 && !animating){
 		if(state[cell]==0){
