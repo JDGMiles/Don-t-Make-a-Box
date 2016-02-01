@@ -5,7 +5,7 @@
 	<link rel="shortcut icon" href="favicon.ico">
 </head>
 
-<body><center>
+<body onload="setup()"><center>
 
 	<table style="position:absolute; left:10px; top:10px; background-color:black;">
 		<td>
@@ -97,10 +97,15 @@ var colorvalue="#000000";
 var thinkingtimemin=100;
 var thinkingtimerandom=500;
 var thinkingtimerandommodifier=200;
+var winner=0;
+var animating=0;
 
 function pick(cell){
-	if(gamescreencomplete){playerturn=1; location.reload();}
-	if(playerturn==0){
+	if(gamescreencomplete){
+		if(winner==1){playerturn=1; window.location.href='index.html';}
+		else{window.location.href='index.html?youmademeangry';}
+	}
+	if(playerturn==0 && !animating){
 		if(state[cell]==0){
 			state[cell]=1;
 			document.getElementById(cell).innerHTML="<img src=\"FilledCell.png\">";
@@ -145,8 +150,24 @@ function checkforloser(){
 	}
 }
 
+function setup(){
+	if(window.location.search.substring(1)=="youmademeangry"){
+		playerturn=1;
+		document.getElementById("instructions").innerHTML="<span style=\"font-size:130%\">You won, so I'm going first!</span>";
+		setTimeout(angryai, 2200);
+	}
+}
+
+function angryai(){
+	state[12]=1;
+	document.getElementById(12).innerHTML="<img src=\"FilledCell.png\">";
+	document.getElementById("instructions").innerHTML="<span style=\"font-size:160%\">Your move</span>";
+	playerturn=0;
+}
+
 function gameover(){
 	document.getElementById("instructions").innerHTML="";
+	animating=1;
 	if(!gamescreencomplete){
 		redamount--;
 		blueamount++;
@@ -157,12 +178,12 @@ function gameover(){
 		document.getElementById(losingbox+1).style.backgroundColor=colorvalue;
 		document.getElementById(losingbox+5).style.backgroundColor=colorvalue;
 		document.getElementById(losingbox+6).style.backgroundColor=colorvalue;
-		if(blueamount==255){gamescreencomplete=1;}
+		if(blueamount==255){gamescreencomplete=1; animating=0;}
 		setTimeout(gameover, 1);
 	}
 	else{
-		if(playerturn==0){document.getElementById("instructions").innerHTML="<span onclick=\"location.reload()\" style=\"font-size:250%\">You Won!</span>";}
-		else{document.getElementById("instructions").innerHTML="<span onclick=\"location.reload()\" style=\"font-size:250%\">You Lost &#9785;</span>";}
+		if(playerturn==0){document.getElementById("instructions").innerHTML="<span onclick=\"window.location.href='index.html?youmademeangry'\" style=\"font-size:250%\">You Won!</span>";}
+		else{winner=1; document.getElementById("instructions").innerHTML="<span onclick=\"window.location.href='index.html';\" style=\"font-size:250%\">You Lost &#9785;</span>";}
 	}
 }
 
