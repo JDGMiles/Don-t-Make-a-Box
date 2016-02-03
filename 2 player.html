@@ -73,7 +73,7 @@
 		</tr>
 	<tr>
 	<td colspan="8"><center><br><br>
-		<a id="instructions" style="font-family:Georgia; color:white; font-size:310%"><span onclick="aiturn()">Player 1 goes first!</span></a>
+		<a id="instructions" style="font-family:Georgia; color:white; font-size:310%">Player 1 goes first!<span style="font-size:70%"><br><i>(Centre cell not allowed turn 1)</i></span></a>
 	</center></td></tr></table>
 
 
@@ -83,6 +83,7 @@
 <script type="text/javascript">
 var state = []; for(var i=0; i<25; i++){state[i]=0;}
 var playerturn=0;
+var gamebegun=0;
 var losingstate=0;
 var testcell=0;
 var aifail=0;
@@ -103,10 +104,11 @@ var animating=0;
 function pick(cell){
 	if(gamescreencomplete){playerturn=1; window.location.href='2 player.html';}
 	if(!animating){
-		if(state[cell]==0){
+		if(state[cell]==0 && (gamebegun || cell!=12)){
 			state[cell]=1;
 			document.getElementById(cell).innerHTML="<img src=\"FilledCellP"+(playerturn+1)+".png\">";
 			playerturn=(playerturn+1)%2;
+			gamebegun=1;
 			if(playerturn==1){document.getElementById("instructions").innerHTML="<span style=\"font-size:100%\">Player 2&rsquo;s turn!</span>";}
 			else{document.getElementById("instructions").innerHTML="<span style=\"font-size:100%\">Player 1&rsquo;s turn!</span>";}
 			checkforloser();
