@@ -1,0 +1,250 @@
+<!DOCTYPE html><html>
+<head>
+	<title>Don&rsquo;t Make a Box</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="shortcut icon" href="favicon.ico">
+</head>
+
+<body><center>
+
+	<table style="position:absolute; left:10px; top:10px; background-color:black;">
+		<td>
+			<a href="#popup1"><img src="../jdgmiles.github.io/questionmark.png" style="width:60px; height:60px"></a><br>
+			<a href="https://twitter.com/jimdgmiles" target=blank_><img src="../jdgmiles.github.io/twitter.png" style="width:60px; height:60px"></a><br>
+			<a href="http://jdgmiles.github.io/" target="_blank"><img src="../jdgmiles.github.io/jdgm.png" style="width:60px; height:60px"></a>
+		</td>
+	</table>
+
+	<div id="popup1" class="overlay">
+		<div class="popup">
+			<br>
+			<a class="close" style="right: 30px;" href="#">&times;</a><br>
+			<div style="font-family:Georgia; color:white; text-align:center; text-decoration:underline; font-size:280%">Don&rsquo;t Make a Box</div>
+			<a style="font-family:Georgia; font-size:200%; color:white; text-align:justify;"><br>Click a cell to color it.<br><br>But don't make a 2x2 box:<br><br></a>
+			<table>
+				<tr>
+					<td class="coloredcell"><img src="FilledCell.png"></td>
+					<td class="coloredcell"><img src="FilledCell.png"></td>
+				</tr>
+				<tr>
+					<td class="coloredcell"><img src="FilledCell.png"></td>
+					<td class="coloredcell"><img src="FilledCell.png"></td>
+				</tr>
+			</table>
+			<br><br>
+		</div>
+	</div>
+
+	<table style="padding:0px 80px 0px 80px;">
+		<tr>
+			<td class="coloredcell" id="0" onclick="pick(0)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="1" onclick="pick(1)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="2" onclick="pick(2)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="3" onclick="pick(3)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="4" onclick="pick(4)"><img src="EmptyCell.png"></td>
+		</tr>
+		<tr>
+			<td class="coloredcell" id="5" onclick="pick(5)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="6" onclick="pick(6)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="7" onclick="pick(7)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="8" onclick="pick(8)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="9" onclick="pick(9)"><img src="EmptyCell.png"></td>
+		</tr>
+		<tr>
+			<td class="coloredcell" id="10" onclick="pick(10)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="11" onclick="pick(11)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="12" onclick="pick(12)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="13" onclick="pick(13)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="14" onclick="pick(14)"><img src="EmptyCell.png"></td>
+		</tr>
+		<tr>
+			<td class="coloredcell" id="15" onclick="pick(15)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="16" onclick="pick(16)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="17" onclick="pick(17)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="18" onclick="pick(18)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="19" onclick="pick(19)"><img src="EmptyCell.png"></td>
+		</tr>
+		<tr>
+			<td class="coloredcell" id="20" onclick="pick(20)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="21" onclick="pick(21)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="22" onclick="pick(22)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="23" onclick="pick(23)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="24" onclick="pick(24)"><img src="EmptyCell.png"></td>
+		</tr>
+	<tr>
+	<td colspan="8"><center><br><br>
+		<a id="instructions" style="font-family:Georgia; color:white; font-size:195%"><span style="font-size:115%;" onclick="aiturnA()">Click a cell, or here to go second</span></a>
+	</center></td></tr></table>
+
+
+</center></body>
+</html>
+
+<script type="text/javascript">
+var state = []; for(var i=0; i<25; i++){state[i]=0;}
+var playerturn=0;
+var losingstate=0;
+var testcell=0;
+var aifail=0;
+var aifailcutoff=200;
+var emptycellfound=0;
+var thinkingtime=0;
+var losingbox=0;
+var gamescreencomplete=0;
+var redamount=255;
+var blueamount=0;
+var colorvalue="#000000";
+var thinkingtimemin=100;
+var thinkingtimerandom=500;
+var thinkingtimerandommodifier=200;
+var winner=0;
+var animating=0;
+var turnone=1;
+var partnercell = []; for(var i=0; i<25; i++){partnercell[i]=5*Math.abs((Math.floor(i/5))%5-4) + Math.abs((i%5)-4);}
+var differcount=0;
+var symmetrical=0;
+var symmetrybroken=0;
+var aigoessecond=1;
+
+function pick(cell){
+	if(gamescreencomplete){playerturn=1; window.location.href='balanced.html';}
+	if(playerturn==0 && !animating){
+		if(state[cell]==0 && (!turnone || cell!=12)){
+			state[cell]=1;
+			document.getElementById(cell).innerHTML="<img src=\"FilledCell.png\">";
+			turnone=0;
+			playerturn=1;
+			document.getElementById("instructions").innerHTML="<span style=\"font-size:150%\">Opponent is thinking...</span>";
+			thinkingtime=thinkingtimerandom*Math.random()+thinkingtimemin;
+			thinkingtimerandom+=thinkingtimerandommodifier;
+			checkforloser();
+			if(losingstate==1){gameover();}
+			else{
+				if(aigoessecond==1){setTimeout(aiturn, thinkingtime);}
+				else{setTimeout(aiturnA, thinkingtime);}
+			}
+		}
+		else if(turnone && cell==12){document.getElementById("instructions").innerHTML="<span style=\"font-size:115%;\"><i>(Centre cell not allowed turn 1)</i></span>"; setTimeout(resetintrotext, 2500);}
+	}
+}
+
+function aiturn(){
+	for(var k=0; k<25; k++){
+		if(k==12){k=13;}
+		if(state[k]==0 && state[partnercell[k]]==0){
+			state[k]=1;
+			checkforloser();
+			state[k]=0;
+			if(losingstate==0){
+				state[partnercell[k]]=1;
+				checkforloser();
+				state[partnercell[k]]=0;
+				if(losingstate==1){
+					state[k]=1;
+					document.getElementById(k).innerHTML="<img src=\"FilledCell.png\">";
+					playerturn=0;
+					document.getElementById("instructions").innerHTML="<span style=\"font-size:160%\">Your move</span>";
+					losingstate=0;
+					k=25;
+				}
+			}
+			else{losingstate=0;}
+		}
+	}
+	if(playerturn==1){aiturnB();}
+}
+
+function aiturnA(){
+	aigoessecond=0;
+	testcell=Math.floor(25*Math.random());
+	if(turnone && testcell==12){testcell=13;}
+	emptycellfound=0;
+	while(!emptycellfound){
+		if(state[testcell]==1){
+			testcell=(testcell+1)%25;
+		}
+		else{emptycellfound=1;}
+	}
+	state[testcell]=1;
+	checkforloser();
+	if(losingstate==1 && aifail<aifailcutoff){losingstate=0; state[testcell]=0; aifail++; aiturn();}
+	else{
+		document.getElementById(testcell).innerHTML="<img src=\"FilledCell.png\">";
+		turnone=0;
+		playerturn=0;
+		document.getElementById("instructions").innerHTML="<span style=\"font-size:160%\">Your move</span>";
+		aifail=0;
+		checkforloser();
+		if(losingstate==1){gameover();}
+	}
+}
+
+function aiturnB(){
+	testcell=Math.floor(25*Math.random());
+	emptycellfound=0;
+	while(!emptycellfound){
+//		if(testcell==12){testcell=13;}
+		if(state[testcell]==1){
+			testcell=(testcell+1)%25;
+		}
+		else{emptycellfound=1;}
+	}
+	state[testcell]=1;
+	checkforloser();
+	checkforsymmetry();
+	if((losingstate==1 || symmetrical==1) && aifail<aifailcutoff){losingstate=0; state[testcell]=0; aifail++; aiturnB();}
+	else{
+		document.getElementById(testcell).innerHTML="<img src=\"FilledCell.png\">";
+		playerturn=0;
+		document.getElementById("instructions").innerHTML="<span style=\"font-size:160%\">Your move</span>";
+		aifail=0;
+		checkforloser();
+		if(losingstate==1){gameover();}
+	}
+}
+
+function resetintrotext(){
+	document.getElementById("instructions").innerHTML="<span style=\"font-size:115%;\" onclick=\"aiturnA()\">Click a cell, or here to go second</span>";
+}
+
+function checkforloser(){
+	for(var i=0; i<4; i++){
+		for(var j=0; j<4; j++){
+			if(state[5*i+j]==1 && state[5*i+j+1]==1 && state[5*(i+1)+j]==1 && state[5*(i+1)+j+1]==1){losingstate=1; losingbox=5*i+j;}
+		}
+	}
+}
+
+function checkforsymmetry(){
+	symmetrical=1;
+	differcount=0;
+	for(var k=0; k<12; k++){
+		if(state[k]!=state[partnercell[k]]){differcount++;}
+	}
+	if(state[12]){differcount--;}
+	if(differcount>0){symmetrical=0;}
+}
+
+function gameover(){
+	document.getElementById("instructions").innerHTML="";
+	animating=1;
+	if(!gamescreencomplete){
+		redamount--;
+		blueamount++;
+		if(redamount<16){colorvalue="#0"+redamount.toString(16)+"00"+blueamount.toString(16);}
+		else if(blueamount<16){colorvalue="#"+redamount.toString(16)+"000"+blueamount.toString(16);}
+		else{colorvalue="#"+redamount.toString(16)+"00"+blueamount.toString(16);}
+		document.getElementById(losingbox).style.backgroundColor=colorvalue;
+		document.getElementById(losingbox+1).style.backgroundColor=colorvalue;
+		document.getElementById(losingbox+5).style.backgroundColor=colorvalue;
+		document.getElementById(losingbox+6).style.backgroundColor=colorvalue;
+		if(blueamount==255){gamescreencomplete=1; animating=0;}
+		setTimeout(gameover, 1);
+	}
+	else{
+		if(playerturn==0){document.getElementById("instructions").innerHTML="<span onclick=\"window.location.href='balanced.html'\" style=\"font-size:250%\">You Won!</span>";}
+		else{winner=1; document.getElementById("instructions").innerHTML="<span onclick=\"window.location.href='balanced.html';\" style=\"font-size:250%\">You Lost &#9785;</span>";}
+	}
+}
+
+</script>
