@@ -1,0 +1,170 @@
+<!DOCTYPE html><html>
+<head>
+	<title>Don&rsquo;t Make a Box</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="shortcut icon" href="favicon.ico">
+</head>
+
+<body onload="setTimeout(setup,500)"><center>
+
+	<table style="position:absolute; left:10px; top:10px; background-color:black;">
+		<td>
+			<a href="#popup1"><img src="../jdgmiles.github.io/questionmark.png" style="width:60px; height:60px"></a><br>
+			<a href="https://twitter.com/jimdgmiles" target=blank_><img src="../jdgmiles.github.io/twitter.png" style="width:60px; height:60px"></a><br>
+			<a href="http://jdgmiles.github.io/" target="_blank"><img src="../jdgmiles.github.io/jdgm.png" style="width:60px; height:60px"></a>
+		</td>
+	</table>
+
+	<div id="popup1" class="overlay">
+		<div class="popup">
+			<br>
+			<a class="close" style="right: 30px;" href="#">&times;</a><br>
+			<div style="font-family:Georgia; color:white; text-align:center; text-decoration:underline; font-size:280%">Don&rsquo;t Make a Box</div>
+			<a style="font-family:Georgia; font-size:200%; color:white; text-align:justify;"><br>Click a cell to color it.<br><br>But don't make a 2x2 box:<br><br></a>
+			<table>
+				<tr>
+					<td class="coloredcell"><img src="FilledCell.png"></td>
+					<td class="coloredcell"><img src="FilledCell.png"></td>
+				</tr>
+				<tr>
+					<td class="coloredcell"><img src="FilledCell.png"></td>
+					<td class="coloredcell"><img src="FilledCell.png"></td>
+				</tr>
+			</table>
+			<br><br>
+		</div>
+	</div>
+
+	<table style="padding:0px 80px 0px 80px;">
+		<tr>
+			<td class="coloredcell" id="0" onclick="pick(0)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="1" onclick="pick(1)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="2" onclick="pick(2)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="3" onclick="pick(3)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="4" onclick="pick(4)"><img src="EmptyCell.png"></td>
+		</tr>
+		<tr>
+			<td class="coloredcell" id="5" onclick="pick(5)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="6" onclick="pick(6)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="7" onclick="pick(7)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="8" onclick="pick(8)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="9" onclick="pick(9)"><img src="EmptyCell.png"></td>
+		</tr>
+		<tr>
+			<td class="coloredcell" id="10" onclick="pick(10)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="11" onclick="pick(11)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="12" onclick="pick(12)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="13" onclick="pick(13)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="14" onclick="pick(14)"><img src="EmptyCell.png"></td>
+		</tr>
+		<tr>
+			<td class="coloredcell" id="15" onclick="pick(15)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="16" onclick="pick(16)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="17" onclick="pick(17)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="18" onclick="pick(18)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="19" onclick="pick(19)"><img src="EmptyCell.png"></td>
+		</tr>
+		<tr>
+			<td class="coloredcell" id="20" onclick="pick(20)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="21" onclick="pick(21)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="22" onclick="pick(22)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="23" onclick="pick(23)"><img src="EmptyCell.png"></td>
+			<td class="coloredcell" id="24" onclick="pick(24)"><img src="EmptyCell.png"></td>
+		</tr>
+	<tr>
+	<td colspan="8"><center><br><br>
+		<a id="instructions" style="font-family:Georgia; color:white; font-size:195%"><span style="font-size:150%">Opponent is thinking...</span></a>
+	</center></td></tr></table>
+
+
+</center></body>
+</html>
+
+<script type="text/javascript">
+var state = []; for(var i=0; i<25; i++){state[i]=0;}
+var playerturn=1;
+var losingstate=0;
+var testcell=0;
+var aifail=0;
+var aifailcutoff=100;
+var emptycellfound=0;
+var thinkingtime=0;
+var losingbox=0;
+var gamescreencomplete=0;
+var redamount=255;
+var blueamount=0;
+var colorvalue="#000000";
+var thinkingtimemin=200;
+var thinkingtimerandom=0;
+var thinkingtimerandommodifier=0;
+var winner=0;
+var animating=0;
+var partnercell = []; for(var i=0; i<25; i++){partnercell[i]=5*Math.abs((Math.floor(i/5))%5-4) + Math.abs((i%5)-4);}
+var lasthumancell=0;
+
+function pick(cell){
+	if(gamescreencomplete){
+		if(winner==1){playerturn=1; window.location.href='godmode.html';}
+		else{playerturn=1; window.location.href='index.html?youmademeangry';} // Interesting point here: in both cases I set playerturn=1 to stop the rest of the function from actually doing anything, but is this necessary when window.location.href just loads a new page anyway? Does the rest of the function even get interpreted or is it dropped immediately to load the new page? I do not know!
+	}
+	if(playerturn==0 && !animating){
+		if(state[cell]==0){
+			state[cell]=1;
+			document.getElementById(cell).innerHTML="<img src=\"FilledCell.png\">";
+			lasthumancell=cell;
+			playerturn=1;
+			document.getElementById("instructions").innerHTML="<span style=\"font-size:150%\">Opponent is thinking...</span>";
+			thinkingtime=thinkingtimerandom*Math.random()+thinkingtimemin;
+			thinkingtimerandom+=thinkingtimerandommodifier;
+			checkforloser();
+			if(losingstate==1){gameover();}
+			else{setTimeout(aiturn, thinkingtime);}
+		}
+	}
+}
+
+function aiturn(){
+	state[partnercell[lasthumancell]]=1;
+	document.getElementById(partnercell[lasthumancell]).innerHTML="<img src=\"FilledCell.png\">";
+	playerturn=0;
+	document.getElementById("instructions").innerHTML="<span style=\"font-size:160%\">Your move</span>";
+}
+
+function checkforloser(){
+	for(var i=0; i<4; i++){
+		for(var j=0; j<4; j++){
+			if(state[5*i+j]==1 && state[5*i+j+1]==1 && state[5*(i+1)+j]==1 && state[5*(i+1)+j+1]==1){losingstate=1; losingbox=5*i+j;}
+		}
+	}
+}
+
+function setup(){
+	state[12]=1;
+	document.getElementById(12).innerHTML="<img src=\"FilledCell.png\">";
+	document.getElementById("instructions").innerHTML="<span style=\"font-size:160%\">Your move</span>";
+	playerturn=0;
+}
+
+function gameover(){
+	document.getElementById("instructions").innerHTML="";
+	animating=1;
+	if(!gamescreencomplete){
+		redamount--;
+		blueamount++;
+		if(redamount<16){colorvalue="#0"+redamount.toString(16)+"00"+blueamount.toString(16);}
+		else if(blueamount<16){colorvalue="#"+redamount.toString(16)+"000"+blueamount.toString(16);}
+		else{colorvalue="#"+redamount.toString(16)+"00"+blueamount.toString(16);}
+		document.getElementById(losingbox).style.backgroundColor=colorvalue;
+		document.getElementById(losingbox+1).style.backgroundColor=colorvalue;
+		document.getElementById(losingbox+5).style.backgroundColor=colorvalue;
+		document.getElementById(losingbox+6).style.backgroundColor=colorvalue;
+		if(blueamount==255){gamescreencomplete=1; animating=0;}
+		setTimeout(gameover, 1);
+	}
+	else{
+		if(playerturn==0){document.getElementById("instructions").innerHTML="<span onclick=\"window.location.href='index.html?youmademeangry'\" style=\"font-size:250%\">You Won!</span>";}
+		else{winner=1; document.getElementById("instructions").innerHTML="<span onclick=\"window.location.href='index.html';\" style=\"font-size:250%\">You Lost &#9785;</span>";}
+	}
+}
+
+</script>
