@@ -1,6 +1,6 @@
 <!DOCTYPE html><html>
 <head>
-	<title>Don&rsquo;t Make a Box</title>
+	<title>Don&rsquo;t Make a Box, Improved AI</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<link rel="shortcut icon" href="favicon.ico">
 </head>
@@ -183,6 +183,16 @@ function checkforloser(){
 		}
 	}
 }
+
+/*
+
+The AI (always player 2) is slightly smarter than last time:
+It never plays in the centre.
+If there is a non-losing play whose "mirror" play would cause you to lose the game then it plays there, thus "breaking" the symmetry of the board.
+Otherwise, it plays in a random unoccupied cell unless doing so loses the game OR risks making the board symmetrical and allowing the player 1 "God" tactic.
+If it can't satisfy 3, then it plays in one of those "losing" places.
+
+*/
 
 function checkforsymmetry(){
 	symmetrical=1;
